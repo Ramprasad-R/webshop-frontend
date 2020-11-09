@@ -13,6 +13,7 @@ import {
 import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'
 
 const ProductScreen = ({ history, match }) => {
+  const [isQtyValid, setIsQtyValid] = useState(true)
   const [qty, setQty] = useState(1)
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
@@ -28,12 +29,12 @@ const ProductScreen = ({ history, match }) => {
   const productReviewCreate = useSelector((state) => state.productReviewCreate)
   const {
     success: successProductReview,
+    loading: loadingProductReview,
     error: errorProductReview,
   } = productReviewCreate
 
   useEffect(() => {
     if (successProductReview) {
-      alert('Review Submitted!')
       setRating(0)
       setComment('')
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
@@ -42,7 +43,12 @@ const ProductScreen = ({ history, match }) => {
   }, [dispatch, match, successProductReview])
 
   const addToCartHandler = () => {
-    history.push(`/cart/${match.params.id}?qty=${qty}`)
+    if (qty <= product.countInStock) {
+      setIsQtyValid(true)
+      history.push(`/cart/${match.params.id}?qty=${qty}`)
+    } else {
+      setIsQtyValid(false)
+    }
   }
 
   const submitHandler = (e) => {
@@ -133,6 +139,11 @@ const ProductScreen = ({ history, match }) => {
                       </Row>
                     </ListGroup.Item>
                   )}
+                  {!isQtyValid && (
+                    <Message variant='danger'>
+                      Only {product.countInStock} available
+                    </Message>
+                  )}
 
                   <ListGroup.Item>
                     <Button
@@ -163,6 +174,12 @@ const ProductScreen = ({ history, match }) => {
                 ))}
                 <ListGroup.Item>
                   <h2>Write a Customer Review</h2>
+                  {successProductReview && (
+                    <Message variant='success'>
+                      Review submitted successfully
+                    </Message>
+                  )}
+                  {loadingProductReview && <Loader />}
                   {errorProductReview && (
                     <Message variant='danger'>{errorProductReview}</Message>
                   )}
@@ -192,7 +209,11 @@ const ProductScreen = ({ history, match }) => {
                           onChange={(e) => setComment(e.target.value)}
                         ></Form.Control>
                       </Form.Group>
-                      <Button type='submit' variant='primary'>
+                      <Button
+                        type='submit'
+                        disabled={loadingProductReview}
+                        variant='primary'
+                      >
                         Submit
                       </Button>
                     </Form>
