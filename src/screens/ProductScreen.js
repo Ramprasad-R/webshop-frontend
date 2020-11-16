@@ -101,7 +101,16 @@ const ProductScreen = ({ history, match }) => {
                     <Row>
                       <Col>Price:</Col>
                       <Col>
-                        <strong>${product.price}</strong>
+                        {product.promotionalPrice ? (
+                          <>
+                            <i style={{ textDecorationLine: 'line-through' }}>
+                              ${product.price}
+                            </i>{' '}
+                            <strong>${product.promotionalPrice}</strong>
+                          </>
+                        ) : (
+                          <strong>${product.price}</strong>
+                        )}
                       </Col>
                     </Row>
                   </ListGroup.Item>
@@ -141,7 +150,8 @@ const ProductScreen = ({ history, match }) => {
                   )}
                   {!isQtyValid && (
                     <Message variant='danger'>
-                      Only {product.countInStock} available
+                      The requested quantity for "{product.name}" is not
+                      available, only {product.countInStock} available
                     </Message>
                   )}
 

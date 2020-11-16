@@ -8,10 +8,11 @@ import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
 import { listProductDetails, updateProduct } from '../actions/productActions'
 import { PRODUCT_UPDATE_RESET } from '../constants/productConstants'
+import { listDepartments } from '../actions/departmentActions'
+import { listBrands } from '../actions/brandActions'
 
 const ProductEditScreen = ({ match, history }) => {
   const productId = match.params.id
-
   const [name, setName] = useState('')
   const [price, setPrice] = useState(0)
   const [image, setImage] = useState('')
@@ -21,6 +22,7 @@ const ProductEditScreen = ({ match, history }) => {
   const [countInStock, setCountInStock] = useState(0)
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [promotionalPrice, setPromotionalPrice] = useState('')
 
   const dispatch = useDispatch()
 
@@ -34,6 +36,16 @@ const ProductEditScreen = ({ match, history }) => {
     success: successUpdate,
   } = productUpdate
 
+  const departmentList = useSelector((state) => state.departmentList)
+  const {
+    loading: loadingDepartment,
+    error: errorDepartment,
+    departments,
+  } = departmentList
+
+  const brandList = useSelector((state) => state.brandList)
+  const { loading: loadingBrand, error: errorBrand, brands } = brandList
+
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: PRODUCT_UPDATE_RESET })
@@ -41,6 +53,8 @@ const ProductEditScreen = ({ match, history }) => {
     } else {
       if (!product.name || product._id !== productId) {
         dispatch(listProductDetails(productId))
+        dispatch(listDepartments())
+        dispatch(listBrands())
       } else {
         setName(product.name)
         setPrice(product.price)
@@ -50,9 +64,18 @@ const ProductEditScreen = ({ match, history }) => {
         setCategory(product.category)
         setCountInStock(product.countInStock)
         setDescription(product.description)
+        setPromotionalPrice(product.promotionalPrice)
       }
     }
-  }, [dispatch, history, productId, product, successUpdate])
+  }, [
+    dispatch,
+    history,
+    productId,
+    product,
+    successUpdate,
+    departments,
+    brands,
+  ])
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0]
@@ -77,6 +100,11 @@ const ProductEditScreen = ({ match, history }) => {
     }
   }
 
+  const listCategory =
+    departments &&
+    department &&
+    departments.filter((dept) => dept.department === department)
+
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(
@@ -84,6 +112,7 @@ const ProductEditScreen = ({ match, history }) => {
         _id: productId,
         name,
         price,
+        promotionalPrice,
         image,
         brand,
         department,
@@ -101,8 +130,12 @@ const ProductEditScreen = ({ match, history }) => {
       </Link>
       <FormContainer>
         <h1>Edit Product</h1>
-        {loadingUpdate && <Loader />}
+        {(loadingUpdate || loadingDepartment || loadingBrand) && <Loader />}
         {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
+        {errorDepartment && (
+          <Message variant='danger'>{errorDepartment}</Message>
+        )}
+        {errorBrand && <Message variant='danger'>{errorBrand}</Message>}
         {loading ? (
           <Loader />
         ) : error ? (
@@ -129,6 +162,16 @@ const ProductEditScreen = ({ match, history }) => {
               ></Form.Control>
             </Form.Group>
 
+            <Form.Group controlId='promotionalPrice'>
+              <Form.Label>Promotional price</Form.Label>
+              <Form.Control
+                type='number'
+                placeholder='Enter promotional price'
+                value={promotionalPrice}
+                onChange={(e) => setPromotionalPrice(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
             <Form.Group controlId='image'>
               <Form.Label>Image</Form.Label>
               <Form.Control
@@ -150,10 +193,17 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Label>Brand</Form.Label>
               <Form.Control
                 type='text'
+                as='select'
                 placeholder='Enter brand'
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-              ></Form.Control>
+              >
+                {brands.map((brand) => (
+                  <option key={brand._id} value={brand.brandName}>
+                    {brand.brandName}
+                  </option>
+                ))}
+              </Form.Control>
             </Form.Group>
 
             <Form.Group controlId='countInStock'>
@@ -170,20 +220,36 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Label>Department</Form.Label>
               <Form.Control
                 type='text'
+                as='select'
                 placeholder='Enter department'
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-              ></Form.Control>
+              >
+                {departments.map((department) => (
+                  <option key={department._id} value={department.department}>
+                    {department.department}
+                  </option>
+                ))}
+              </Form.Control>
             </Form.Group>
 
             <Form.Group controlId='category'>
               <Form.Label>Category</Form.Label>
               <Form.Control
                 type='text'
+                as='select'
                 placeholder='Enter category'
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-              ></Form.Control>
+              >
+                {listCategory.length > 0 &&
+                  listCategory[0].categories.length > 0 &&
+                  listCategory[0].categories.map((category) => (
+                    <option key={category._id} value={category.department}>
+                      {category.category}
+                    </option>
+                  ))}
+              </Form.Control>
             </Form.Group>
 
             <Form.Group controlId='description'>

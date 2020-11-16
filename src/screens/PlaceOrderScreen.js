@@ -6,11 +6,18 @@ import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { createOrder } from '../actions/orderActions'
 import { ORDER_CREATE_RESET } from '../constants/orderConstants'
+import { USER_DETAILS_RESET } from '../constants/userConstants'
 
 const PlaceOrderScreen = ({ history }) => {
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
+
+  if (!cart.shippingAddress.address) {
+    history.push('/shipping')
+  } else if (!cart.paymentMethod) {
+    history.push('/payment')
+  }
 
   //   Calculate prices
   const addDecimals = (num) => {
@@ -18,7 +25,12 @@ const PlaceOrderScreen = ({ history }) => {
   }
 
   cart.itemsPrice = addDecimals(
-    cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+    cart.cartItems.reduce(
+      (acc, item) =>
+        acc +
+        (item.promotionalPrice ? item.promotionalPrice : item.price) * item.qty,
+      0
+    )
   )
   cart.shippingPrice = addDecimals(cart.itemsPrice > 50 ? 0 : 3.99)
   cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)))
@@ -34,6 +46,7 @@ const PlaceOrderScreen = ({ history }) => {
   useEffect(() => {
     if (success) {
       history.push(`/order/${order._id}`)
+      dispatch({ type: USER_DETAILS_RESET })
       dispatch({ type: ORDER_CREATE_RESET })
     }
     // eslint-disable-next-line
@@ -98,7 +111,15 @@ const PlaceOrderScreen = ({ history }) => {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
+                          {item.qty} x $
+                          {item.promotionalPrice
+                            ? item.promotionalPrice
+                            : item.price}{' '}
+                          = $
+                          {item.qty *
+                            (item.promotionalPrice
+                              ? item.promotionalPrice
+                              : item.price)}
                         </Col>
                       </Row>
                     </ListGroup.Item>

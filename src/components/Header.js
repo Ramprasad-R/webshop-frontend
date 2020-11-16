@@ -1,16 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import SearchBox from './SearchBox'
 import { logout } from '../actions/userActions'
+import { listDepartments } from '../actions/departmentActions'
+import { listBrands } from '../actions/brandActions'
 
 const Header = () => {
   const dispatch = useDispatch()
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
+
+  const departmentList = useSelector((state) => state.departmentList)
+  const { departments } = departmentList
+
+  const brandList = useSelector((state) => state.brandList)
+  const { brands } = brandList
+
+  useEffect(() => {
+    dispatch(listDepartments())
+    dispatch(listBrands())
+  }, [dispatch])
 
   const logoutHandler = () => {
     dispatch(logout())
@@ -35,6 +48,26 @@ const Header = () => {
           <Navbar.Collapse id='basic-navbar-nav'>
             <Route render={({ history }) => <SearchBox history={history} />} />
             <Nav className='ml-auto'>
+              {departments.length > 0 && (
+                <NavDropdown title='Products' id='username'>
+                  {departments.map((department) => (
+                    <LinkContainer to={`/department/${department.department}`}>
+                      <NavDropdown.Item>
+                        {department.department}
+                      </NavDropdown.Item>
+                    </LinkContainer>
+                  ))}
+                </NavDropdown>
+              )}
+              {brands.length > 0 && (
+                <NavDropdown title='Brands' id='username'>
+                  {brands.map((brand) => (
+                    <LinkContainer to={`/brand/${brand.brandName}`}>
+                      <NavDropdown.Item>{brand.brandName}</NavDropdown.Item>
+                    </LinkContainer>
+                  ))}
+                </NavDropdown>
+              )}
               <LinkContainer to='/cart'>
                 <Nav.Link>
                   <i className='fas fa-shopping-cart'></i>Cart
@@ -66,6 +99,9 @@ const Header = () => {
                   </LinkContainer>
                   <LinkContainer to='/admin/departmentlist'>
                     <NavDropdown.Item>Departments</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/brandlist'>
+                    <NavDropdown.Item>Brands</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to='/admin/orderlist'>
                     <NavDropdown.Item>Orders</NavDropdown.Item>

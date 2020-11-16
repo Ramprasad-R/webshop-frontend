@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import { LinkContainer } from 'react-router-bootstrap'
 import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import CreateDepartment from '../components/CreateDepartment'
-import { listDepartments, deleteDepartment } from '../actions/departmentActions'
-import { DEPARTMENT_CREATE_RESET } from '../constants/departmentConstants'
+import CreateBrand from '../components/CreateBrand'
+import { listBrands, deleteBrand } from '../actions/brandActions'
+import { BRAND_CREATE_RESET } from '../constants/brandConstants'
 
-const DepartmentListScreen = ({ history }) => {
+const BrandListScreen = ({ history }) => {
   const dispatch = useDispatch()
 
-  const [createDepartmentModal, setCreateDepartmentModal] = useState(false)
-  const departmentList = useSelector((state) => state.departmentList)
-  const { loading, error, departments } = departmentList
-  const departmentDelete = useSelector((state) => state.departmentDelete)
+  const [createBrandModal, setCreateBrandModal] = useState(false)
+  const brandList = useSelector((state) => state.brandList)
+  const { loading, error, brands } = brandList
+  const brandDelete = useSelector((state) => state.brandDelete)
   const {
     loading: loadingDelete,
     error: errorDelete,
     success: successDelete,
-  } = departmentDelete
+  } = brandDelete
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
 
   useEffect(() => {
-    dispatch({ type: DEPARTMENT_CREATE_RESET })
+    dispatch({ type: BRAND_CREATE_RESET })
     if (userInfo && userInfo.isAdmin) {
-      dispatch(listDepartments())
+      dispatch(listBrands())
     } else {
       history.push('/login')
     }
@@ -35,7 +34,7 @@ const DepartmentListScreen = ({ history }) => {
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure')) {
-      dispatch(deleteDepartment(id))
+      dispatch(deleteBrand(id))
     }
   }
 
@@ -43,23 +42,20 @@ const DepartmentListScreen = ({ history }) => {
     <>
       <Row className='align-items-center'>
         <Col>
-          <h1>Departments</h1>
+          <h1>Brands</h1>
         </Col>
         <Col className='text-right'>
-          <Button
-            className='my-3'
-            onClick={() => setCreateDepartmentModal(true)}
-          >
-            <i className='fas fa-plus'></i> Create Department
+          <Button className='my-3' onClick={() => setCreateBrandModal(true)}>
+            <i className='fas fa-plus'></i> Create Brand
           </Button>
         </Col>
       </Row>
-      <CreateDepartment
-        show={createDepartmentModal}
+      <CreateBrand
+        show={createBrandModal}
         onHide={() => {
-          setCreateDepartmentModal(false)
-          dispatch(listDepartments())
-          dispatch({ type: DEPARTMENT_CREATE_RESET })
+          setCreateBrandModal(false)
+          dispatch(listBrands())
+          dispatch({ type: BRAND_CREATE_RESET })
         }}
       />
       {loadingDelete && <Loader />}
@@ -78,22 +74,15 @@ const DepartmentListScreen = ({ history }) => {
             </tr>
           </thead>
           <tbody>
-            {departments.map((department) => (
-              <tr key={department._id}>
-                <td>{department._id}</td>
-                <td>{department.department}</td>
+            {brands.map((brand) => (
+              <tr key={brand._id}>
+                <td>{brand._id}</td>
+                <td>{brand.brandName}</td>
                 <td>
-                  <LinkContainer
-                    to={`/admin/department/${department._id}/edit`}
-                  >
-                    <Button variant='light' className='btn-sm'>
-                      <i className='fas fa-edit'></i>
-                    </Button>
-                  </LinkContainer>
                   <Button
                     variant='danger'
                     className='btn-sm'
-                    onClick={() => deleteHandler(department._id)}
+                    onClick={() => deleteHandler(brand._id)}
                   >
                     <i className='fas fa-trash'></i>
                   </Button>
@@ -107,4 +96,4 @@ const DepartmentListScreen = ({ history }) => {
   )
 }
 
-export default DepartmentListScreen
+export default BrandListScreen

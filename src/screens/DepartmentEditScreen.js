@@ -9,6 +9,7 @@ import {
   listDepartmentDetails,
 } from '../actions/departmentActions'
 import CreateCategory from '../components/CreateCategory'
+import { CATEGORY_CREATE_RESET } from '../constants/departmentConstants'
 
 const DepartmentEditScreen = ({ history, match }) => {
   const departmentId = match.params.id
@@ -27,6 +28,7 @@ const DepartmentEditScreen = ({ history, match }) => {
   const { userInfo } = userLogin
 
   useEffect(() => {
+    dispatch({ type: CATEGORY_CREATE_RESET })
     if (userInfo && userInfo.isAdmin) {
       dispatch(listDepartmentDetails(departmentId))
     } else {
@@ -60,12 +62,13 @@ const DepartmentEditScreen = ({ history, match }) => {
         show={createCategoryModal}
         onHide={() => {
           setCreateCategoryModal(false)
+          dispatch({ type: CATEGORY_CREATE_RESET })
+
           dispatch(listDepartmentDetails(departmentId))
         }}
       />
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
-      {successDelete && <Message variant='success'>Category Deleted</Message>}
       {loading ? (
         <Loader />
       ) : error ? (

@@ -24,19 +24,40 @@ import {
 } from '../constants/productConstants'
 import { logout } from './userActions'
 
-export const listProducts = (keyword = '', pageNumber = '') => async (
-  dispatch
-) => {
+export const listProducts = (
+  keyword = '',
+  department = '',
+  brand = '',
+  pageNumber = ''
+) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST })
 
-    const { data } = await axios.get(
-      `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
-    )
-    dispatch({
-      type: PRODUCT_LIST_SUCCESS,
-      payload: data,
-    })
+    if (department) {
+      const { data } = await axios.get(
+        `/api/products?department=${department}&pageNumber=${pageNumber}`
+      )
+      dispatch({
+        type: PRODUCT_LIST_SUCCESS,
+        payload: data,
+      })
+    } else if (brand) {
+      const { data } = await axios.get(
+        `/api/products?brand=${brand}&pageNumber=${pageNumber}`
+      )
+      dispatch({
+        type: PRODUCT_LIST_SUCCESS,
+        payload: data,
+      })
+    } else {
+      const { data } = await axios.get(
+        `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+      )
+      dispatch({
+        type: PRODUCT_LIST_SUCCESS,
+        payload: data,
+      })
+    }
   } catch (error) {
     dispatch({
       type: PRODUCT_LIST_FAIL,
@@ -165,6 +186,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
       type: PRODUCT_UPDATE_SUCCESS,
       payload: data,
     })
+    dispatch({ type: PRODUCT_DETAILS_SUCCESS, payload: data })
   } catch (error) {
     const message =
       error.response && error.response.data.message

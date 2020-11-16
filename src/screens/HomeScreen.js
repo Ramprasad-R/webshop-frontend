@@ -12,6 +12,8 @@ import { listProducts } from '../actions/productActions'
 
 const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword
+  const department = match.params.department
+  const brand = match.params.brand
   const pageNumber = match.params.pageNumber || 1
 
   const dispatch = useDispatch()
@@ -21,13 +23,19 @@ const HomeScreen = ({ match }) => {
   const { loading, error, products, page, pages } = productList
 
   useEffect(() => {
-    dispatch(listProducts(keyword, pageNumber))
-  }, [dispatch, keyword, pageNumber])
+    if (department) {
+      dispatch(listProducts('', department, '', pageNumber))
+    } else if (brand) {
+      dispatch(listProducts('', '', brand, pageNumber))
+    } else {
+      dispatch(listProducts(keyword, '', '', pageNumber))
+    }
+  }, [dispatch, keyword, pageNumber, department, brand])
 
   return (
     <>
       <Meta />
-      {!keyword ? (
+      {!keyword && !department && !brand ? (
         <ProductCarousel />
       ) : (
         <Link to='/' className='btn btn-light'>

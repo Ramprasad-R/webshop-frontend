@@ -12,7 +12,7 @@ const Meta = ({ title, description, keywords }) => {
 }
 
 Meta.defaultProps = {
-  title: 'Welcome To Webshop',
+  title: 'Cauvery Stores - Singapore',
   description: 'We sell the best products for cheap',
   keywords:
     'indian grocery , cheap grocery, spice, fresh indian vegetables, indian curry',
