@@ -16,7 +16,7 @@ h2 {
   padding: 0.5rem 0;
 }
 
-pagination {
+.pagination {
   display: flex;
   justify-content: center;
 }
