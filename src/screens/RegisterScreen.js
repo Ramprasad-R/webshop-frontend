@@ -71,6 +71,10 @@ const RegisterScreen = ({ location, history }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
+          <Form.Text className='text-muted'>
+            Use 8 or more characters with a mix of lower/uppercase letters,
+            numbers & symbols
+          </Form.Text>
         </Form.Group>
 
         <Form.Group controlId='confirmPassword'>

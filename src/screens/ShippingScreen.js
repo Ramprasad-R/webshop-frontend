@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
+import validator from 'validator'
 import FormContainer from '../components/FormContainer'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { saveShippingAddress } from '../actions/cartActions'
@@ -13,12 +14,15 @@ const ShippingScreen = ({ history }) => {
   const [city, setCity] = useState(shippingAddress.city)
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
   const [country, setCountry] = useState(shippingAddress.country)
+  const [phoneNumber, setPhoneNumber] = useState(shippingAddress.phoneNumber)
 
   const dispatch = useDispatch()
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(saveShippingAddress({ address, city, postalCode, country }))
+    dispatch(
+      saveShippingAddress({ address, city, postalCode, country, phoneNumber })
+    )
     history.push('/payment')
   }
 
@@ -71,7 +75,23 @@ const ShippingScreen = ({ history }) => {
           ></Form.Control>
         </Form.Group>
 
-        <Button type='submit' variant='primary'>
+        <Form.Group controlId='phoneNumber'>
+          <Form.Label>Phone number</Form.Label>
+
+          <Form.Control
+            type='text'
+            placeholder='Enter phone number'
+            value={phoneNumber}
+            required
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+
+        <Button
+          type='submit'
+          variant='primary'
+          disabled={!validator.isMobilePhone(phoneNumber)}
+        >
           Continue
         </Button>
       </Form>
