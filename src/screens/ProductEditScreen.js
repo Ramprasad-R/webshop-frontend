@@ -22,7 +22,10 @@ const ProductEditScreen = ({ match, history }) => {
   const [countInStock, setCountInStock] = useState(0)
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [promotionalPrice, setPromotionalPrice] = useState('')
+  const [promotionalPrice, setPromotionalPrice] = useState(0)
+  const [cost, setCost] = useState(0)
+  const [dateOfExpiry, setDateOfExpiry] = useState('')
+  const [barCode, setBarCode] = useState('')
 
   const dispatch = useDispatch()
 
@@ -57,6 +60,7 @@ const ProductEditScreen = ({ match, history }) => {
         dispatch(listBrands())
       } else {
         setName(product.name)
+        setBarCode(product.barCode)
         setPrice(product.price)
         setImage(product.image)
         setBrand(product.brand)
@@ -65,6 +69,10 @@ const ProductEditScreen = ({ match, history }) => {
         setCountInStock(product.countInStock)
         setDescription(product.description)
         setPromotionalPrice(product.promotionalPrice)
+        setCost(product.cost)
+        setDateOfExpiry(
+          product.dateOfExpiry && product.dateOfExpiry.substring(0, 10)
+        )
       }
     }
   }, [
@@ -111,6 +119,8 @@ const ProductEditScreen = ({ match, history }) => {
       updateProduct({
         _id: productId,
         name,
+        barCode,
+        cost,
         price,
         promotionalPrice,
         image,
@@ -119,6 +129,7 @@ const ProductEditScreen = ({ match, history }) => {
         category,
         description,
         countInStock,
+        dateOfExpiry,
       })
     )
   }
@@ -149,6 +160,26 @@ const ProductEditScreen = ({ match, history }) => {
                 placeholder='Enter name'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId='barCode'>
+              <Form.Label>Bar Code</Form.Label>
+              <Form.Control
+                type='text'
+                placeholder='Enter bar code'
+                value={barCode}
+                onChange={(e) => setBarCode(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId='cost'>
+              <Form.Label>Cost</Form.Label>
+              <Form.Control
+                type='number'
+                placeholder='Enter Cost'
+                value={cost}
+                onChange={(e) => setCost(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
@@ -250,6 +281,16 @@ const ProductEditScreen = ({ match, history }) => {
                     </option>
                   ))}
               </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId='dateOfExpiry'>
+              <Form.Label>Date of expiry</Form.Label>
+              <Form.Control
+                type='date'
+                placeholder='Enter date of expiry'
+                value={dateOfExpiry}
+                onChange={(e) => setDateOfExpiry(e.target.value)}
+              ></Form.Control>
             </Form.Group>
 
             <Form.Group controlId='description'>

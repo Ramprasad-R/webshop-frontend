@@ -14,7 +14,9 @@ const ShippingScreen = ({ history }) => {
   const [city, setCity] = useState(shippingAddress.city)
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
   const [country, setCountry] = useState(shippingAddress.country)
-  const [phoneNumber, setPhoneNumber] = useState(shippingAddress.phoneNumber)
+  const [phoneNumber, setPhoneNumber] = useState(
+    shippingAddress.phoneNumber || ''
+  )
 
   const dispatch = useDispatch()
 

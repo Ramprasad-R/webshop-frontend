@@ -99,7 +99,13 @@ const OrderScreen = ({ match, history }) => {
     <Message variant='danger'>{error}</Message>
   ) : (
     <>
-      <h1>Order {order._id}</h1>
+      {userInfo && userInfo.isAdmin ? (
+        <h1>
+          Order # {order._id} / Invoice # {order.invoiceNumber}
+        </h1>
+      ) : (
+        <h1>Invoice # {order.invoiceNumber}</h1>
+      )}
       <Row>
         <Col md={8}>
           <ListGroup variant='flush'>
