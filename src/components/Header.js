@@ -51,7 +51,10 @@ const Header = () => {
               {departments.length > 0 && (
                 <NavDropdown title='Products' id='username'>
                   {departments.map((department) => (
-                    <LinkContainer to={`/department/${department.department}`}>
+                    <LinkContainer
+                      to={`/department/${department.department}`}
+                      key={department._id}
+                    >
                       <NavDropdown.Item>
                         {department.department}
                       </NavDropdown.Item>
@@ -62,7 +65,10 @@ const Header = () => {
               {brands.length > 0 && (
                 <NavDropdown title='Brands' id='username'>
                   {brands.map((brand) => (
-                    <LinkContainer to={`/brand/${brand.brandName}`}>
+                    <LinkContainer
+                      to={`/brand/${brand.brandName}`}
+                      key={brand._id}
+                    >
                       <NavDropdown.Item>{brand.brandName}</NavDropdown.Item>
                     </LinkContainer>
                   ))}

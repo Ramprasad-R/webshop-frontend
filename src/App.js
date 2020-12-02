@@ -27,6 +27,26 @@ function App() {
     <Router>
       <Header />
       <main className='py-3'>
+        <Route path='/search/:keyword' component={HomeScreen} exact />
+        <Route path='/page/:pageNumber' component={HomeScreen} exact />
+        <Route
+          path='/search/:keyword/page/:pageNumber'
+          component={HomeScreen}
+          exact
+        />
+        <Route path='/department/:department' component={HomeScreen} exact />
+        <Route
+          path='/department/:department/page/:pageNumber'
+          component={HomeScreen}
+          exact
+        />
+        <Route path='/brand/:brand' component={HomeScreen} exact />
+        <Route
+          path='/brand/:brand/page/:pageNumber'
+          component={HomeScreen}
+          exact
+        />
+        <Route exact path='/' component={HomeScreen} />
         <Container>
           <Route path='/login' component={LoginScreen} />
           <Route path='/register' component={RegisterScreen} />
@@ -60,26 +80,6 @@ function App() {
             component={DepartmentEditScreen}
           />
           <Route path='/admin/brandlist' component={BrandListScreen} />
-          <Route path='/search/:keyword' component={HomeScreen} exact />
-          <Route path='/page/:pageNumber' component={HomeScreen} exact />
-          <Route
-            path='/search/:keyword/page/:pageNumber'
-            component={HomeScreen}
-            exact
-          />
-          <Route path='/department/:department' component={HomeScreen} exact />
-          <Route
-            path='/department/:department/page/:pageNumber'
-            component={HomeScreen}
-            exact
-          />
-          <Route path='/brand/:brand' component={HomeScreen} exact />
-          <Route
-            path='/brand/:brand/page/:pageNumber'
-            component={HomeScreen}
-            exact
-          />
-          <Route exact path='/' component={HomeScreen} />
         </Container>
       </main>
       <Footer />

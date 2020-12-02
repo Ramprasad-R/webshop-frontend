@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Col, Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
 import Product from '../components/Product'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
@@ -35,34 +35,36 @@ const HomeScreen = ({ match }) => {
   return (
     <>
       <Meta />
-      {!keyword && !department && !brand ? (
-        <ProductCarousel />
-      ) : (
-        <Link to='/' className='btn btn-light'>
-          Go Back
-        </Link>
-      )}
-      <h1>PRODUCTS</h1>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message children={error} variant='danger' />
-      ) : (
-        <>
-          <Row>
-            {products.map((product) => (
-              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                <Product product={product} />
-              </Col>
-            ))}
-          </Row>
-          <Paginate
-            pages={pages}
-            page={page}
-            keyword={keyword ? keyword : ''}
-          />
-        </>
-      )}
+      {!keyword && !department && !brand && <ProductCarousel />}
+
+      <Container>
+        {keyword || department || brand ? (
+          <Link to='/' className='btn btn-light'>
+            Go Back
+          </Link>
+        ) : null}
+        <h1>PRODUCTS</h1>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message children={error} variant='danger' />
+        ) : (
+          <>
+            <Row>
+              {products.map((product) => (
+                <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                  <Product product={product} />
+                </Col>
+              ))}
+            </Row>
+            <Paginate
+              pages={pages}
+              page={page}
+              keyword={keyword ? keyword : ''}
+            />
+          </>
+        )}
+      </Container>
     </>
   )
 }

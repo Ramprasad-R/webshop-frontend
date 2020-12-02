@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react'
+import axios from 'axios'
+import FileSaver from 'file-saver'
+import React, { useEffect, useState } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,6 +13,7 @@ import {
   createProduct,
 } from '../actions/productActions'
 import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
+import ProductTemplateUpload from '../components/ProductTemplateUpload'
 
 const ProductListScreen = ({ history, match }) => {
   const pageNumber = match.params.pageNumber || 1
@@ -37,6 +40,8 @@ const ProductListScreen = ({ history, match }) => {
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
+
+  const [templateUploadModal, setTemplateUploadModal] = useState(false)
 
   useEffect(() => {
     dispatch({ type: PRODUCT_CREATE_RESET })
@@ -70,6 +75,13 @@ const ProductListScreen = ({ history, match }) => {
     dispatch(createProduct())
   }
 
+  const downloadTemplate = async () => {
+    const { data } = await axios.get('/api/download/template', {
+      responseType: 'blob',
+    })
+    FileSaver.saveAs(data, 'ProductLoadTemplate.xlsx')
+  }
+
   return (
     <>
       <Row className='align-items-center'>
@@ -77,11 +89,28 @@ const ProductListScreen = ({ history, match }) => {
           <h1>Products</h1>
         </Col>
         <Col className='text-right'>
+          <Button className='my-3' onClick={downloadTemplate}>
+            <i className='fas fa-download'></i> Download Template
+          </Button>
+          <Button
+            className='my-3 mx-3'
+            onClick={() => setTemplateUploadModal(true)}
+          >
+            <i className='fas fa-upload'></i> Import Products
+          </Button>
           <Button className='my-3' onClick={createProductHandler}>
             <i className='fas fa-plus'></i> Create Product
           </Button>
         </Col>
       </Row>
+      <ProductTemplateUpload
+        show={templateUploadModal}
+        onHide={() => {
+          setTemplateUploadModal(false)
+          dispatch(listProducts())
+        }}
+      />
+
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
       {loadingCreate && <Loader />}
